@@ -2,7 +2,10 @@ import * as vscode from 'vscode';
 
 import { VimState } from '../vim_state_types';
 
-export function getRegisterContentsList(vimState: VimState, editor: vscode.TextEditor) {
+export function getRegisterContentsList(
+    vimState: VimState,
+    editor: vscode.TextEditor
+) {
     if (vimState.registers.contentsList.length === 0) return undefined;
 
     let registerContentsList = vimState.registers.contentsList;
@@ -10,7 +13,7 @@ export function getRegisterContentsList(vimState: VimState, editor: vscode.TextE
     // Handle putting with a different number of cursors than when you yanked
     if (vimState.registers.contentsList.length !== editor.selections.length) {
         const combinedContents = vimState.registers.contentsList.join('\n');
-        registerContentsList = editor.selections.map(selection => combinedContents);
+        registerContentsList = editor.selections.map(() => combinedContents);
     }
 
     return registerContentsList;
@@ -20,7 +23,7 @@ export function getRegisterContentsList(vimState: VimState, editor: vscode.TextE
 export function getInsertRangesFromEnd(
     document: vscode.TextDocument,
     positions: vscode.Position[],
-    contentsList: (string | undefined)[],
+    contentsList: (string | undefined)[]
 ) {
     return positions.map((position, i) => {
         const contents = contentsList[i];
@@ -31,10 +34,16 @@ export function getInsertRangesFromEnd(
         let beginningPosition;
         if (lines.length > 1) {
             const beginningLine = position.line - (lines.length - 1);
-            const beginningCharacter = document.lineAt(beginningLine).text.length - lines[0].length;
-            beginningPosition = new vscode.Position(beginningLine, beginningCharacter);
+            const beginningCharacter =
+                document.lineAt(beginningLine).text.length - lines[0].length;
+            beginningPosition = new vscode.Position(
+                beginningLine,
+                beginningCharacter
+            );
         } else {
-            beginningPosition = position.with({ character: position.character - lines[0].length });
+            beginningPosition = position.with({
+                character: position.character - lines[0].length
+            });
         }
 
         return new vscode.Range(beginningPosition, position);
@@ -43,27 +52,39 @@ export function getInsertRangesFromEnd(
 
 // Given positions and contents inserted at those positions, return the range that will
 // select that contents
-export function getInsertRangesFromBeginning(positions: vscode.Position[], contentsList: (string | undefined)[]) {
+export function getInsertRangesFromBeginning(
+    positions: vscode.Position[],
+    contentsList: (string | undefined)[]
+) {
     return positions.map((position, i) => {
         const contents = contentsList[i];
         if (!contents) return undefined;
 
         const lines = contents.split(/\r?\n/);
         const endLine = position.line + lines.length - 1;
-        const endCharacter = (lines.length === 1 ?
-            position.character + lines[0].length :
-            lines[lines.length - 1].length
-        );
+        const endCharacter =
+            lines.length === 1
+                ? position.character + lines[0].length
+                : lines[lines.length - 1].length;
 
-        return new vscode.Range(position, new vscode.Position(endLine, endCharacter));
+        return new vscode.Range(
+            position,
+            new vscode.Position(endLine, endCharacter)
+        );
     });
 }
 
 // Given positions and contents inserted at those positions, figure out how the positions will move
 // when the contents is inserted. For example inserting a line above a position will increase its
 // line number by one.
-export function adjustInsertPositions(positions: vscode.Position[], contentsList: (string | undefined)[]) {
-    const indexPositions = positions.map((position, i) => ({ originalIndex: i, position: position }));
+export function adjustInsertPositions(
+    positions: vscode.Position[],
+    contentsList: (string | undefined)[]
+) {
+    const indexPositions = positions.map((position, i) => ({
+        originalIndex: i,
+        position: position
+    }));
 
     indexPositions.sort((a, b) => {
         if (a.position.isBefore(b.position)) return -1;
@@ -88,7 +109,7 @@ export function adjustInsertPositions(positions: vscode.Position[], contentsList
 
         adjustedIndexPositions.push({
             originalIndex: indexPosition.originalIndex,
-            position: new vscode.Position(adjustedLine, adjustedCharacter),
+            position: new vscode.Position(adjustedLine, adjustedCharacter)
         });
 
         // Increase offsets
@@ -104,9 +125,9 @@ export function adjustInsertPositions(positions: vscode.Position[], contentsList
                 if (contentsLines.length === 1) {
                     characterOffset += contentsLines[0].length;
                 } else {
-                    characterOffset += (
-                        contentsLines[contentsLines.length - 1].length - indexPosition.position.character
-                    );
+                    characterOffset +=
+                        contentsLines[contentsLines.length - 1].length -
+                        indexPosition.position.character;
                 }
             } else {
                 characterOffset = 0;
@@ -115,6 +136,8 @@ export function adjustInsertPositions(positions: vscode.Position[], contentsList
         }
     }
 
-    adjustedIndexPositions.sort((a, b) => (a.originalIndex - b.originalIndex));
-    return adjustedIndexPositions.map(indexPosition => indexPosition.position);
+    adjustedIndexPositions.sort((a, b) => a.originalIndex - b.originalIndex);
+    return adjustedIndexPositions.map(
+        (indexPosition) => indexPosition.position
+    );
 }

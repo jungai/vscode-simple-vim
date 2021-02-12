@@ -1,9 +1,11 @@
 const NON_WORD_CHARACTERS = '/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?-';
 
-export function whitespaceWordRanges(text: string): { start: number, end: number }[] {
+export function whitespaceWordRanges(
+    text: string
+): { start: number; end: number }[] {
     enum State {
         Whitespace,
-        Word,
+        Word
     }
 
     let state = State.Whitespace;
@@ -22,7 +24,7 @@ export function whitespaceWordRanges(text: string): { start: number, end: number
             if (isWhitespaceCharacter(char)) {
                 ranges.push({
                     start: startIndex,
-                    end: i - 1,
+                    end: i - 1
                 });
 
                 state = State.Whitespace;
@@ -33,18 +35,18 @@ export function whitespaceWordRanges(text: string): { start: number, end: number
     if (state === State.Word) {
         ranges.push({
             start: startIndex,
-            end: text.length - 1,
+            end: text.length - 1
         });
     }
 
     return ranges;
 }
 
-export function wordRanges(text: string): { start: number, end: number }[] {
+export function wordRanges(text: string): { start: number; end: number }[] {
     enum State {
         Whitespace,
         Word,
-        NonWord,
+        NonWord
     }
 
     let state = State.Whitespace;
@@ -63,7 +65,7 @@ export function wordRanges(text: string): { start: number, end: number }[] {
             if (!isWordCharacter(char)) {
                 ranges.push({
                     start: startIndex,
-                    end: i - 1,
+                    end: i - 1
                 });
 
                 if (isWhitespaceCharacter(char)) {
@@ -77,7 +79,7 @@ export function wordRanges(text: string): { start: number, end: number }[] {
             if (!isNonWordCharacter(char)) {
                 ranges.push({
                     start: startIndex,
-                    end: i - 1,
+                    end: i - 1
                 });
 
                 if (isWhitespaceCharacter(char)) {
@@ -93,7 +95,7 @@ export function wordRanges(text: string): { start: number, end: number }[] {
     if (state !== State.Whitespace) {
         ranges.push({
             start: startIndex,
-            end: text.length - 1,
+            end: text.length - 1
         });
     }
 

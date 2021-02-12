@@ -2,10 +2,21 @@ import * as vscode from 'vscode';
 
 import { SimpleRange } from './simple_range_types';
 
-export function indentLevelRange(document: vscode.TextDocument, lineNumber: number): SimpleRange {
+export function indentLevelRange(
+    document: vscode.TextDocument,
+    lineNumber: number
+): SimpleRange {
     const indentLevel = findIndentLevel(document, lineNumber);
-    const rangeStart = indentLevelRangeBefore(document, lineNumber, indentLevel);
-    const rangeEnd = indentLevelRangeAfter(document, lineNumber + 1, indentLevel);
+    const rangeStart = indentLevelRangeBefore(
+        document,
+        lineNumber,
+        indentLevel
+    );
+    const rangeEnd = indentLevelRangeAfter(
+        document,
+        lineNumber + 1,
+        indentLevel
+    );
 
     if (rangeStart && rangeEnd) {
         return { start: rangeStart.start, end: rangeEnd.end };
@@ -22,7 +33,7 @@ export function indentLevelRange(document: vscode.TextDocument, lineNumber: numb
 function indentLevelRangeBefore(
     document: vscode.TextDocument,
     lineNumber: number,
-    indentLevel: number,
+    indentLevel: number
 ): SimpleRange | undefined {
     let result;
 
@@ -50,7 +61,7 @@ function indentLevelRangeBefore(
 function indentLevelRangeAfter(
     document: vscode.TextDocument,
     lineNumber: number,
-    indentLevel: number,
+    indentLevel: number
 ): SimpleRange | undefined {
     let result;
 
@@ -84,11 +95,14 @@ function findIndentLevel(document: vscode.TextDocument, lineNumber: number) {
 
     return Math.max(
         findIndentLevelForward(document, lineNumber + 1),
-        findIndentLevelBackward(document, lineNumber - 1),
+        findIndentLevelBackward(document, lineNumber - 1)
     );
 }
 
-function findIndentLevelForward(document: vscode.TextDocument, lineNumber: number): number {
+function findIndentLevelForward(
+    document: vscode.TextDocument,
+    lineNumber: number
+): number {
     for (let i = lineNumber; i < document.lineCount; ++i) {
         const line = document.lineAt(i);
 
@@ -100,7 +114,10 @@ function findIndentLevelForward(document: vscode.TextDocument, lineNumber: numbe
     return 0;
 }
 
-function findIndentLevelBackward(document: vscode.TextDocument, lineNumber: number): number {
+function findIndentLevelBackward(
+    document: vscode.TextDocument,
+    lineNumber: number
+): number {
     for (let i = lineNumber; i >= 0; --i) {
         const line = document.lineAt(i);
 

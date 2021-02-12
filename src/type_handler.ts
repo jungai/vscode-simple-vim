@@ -28,6 +28,6 @@ export function typeHandler(vimState: VimState, char: string): void {
             vimState.keysPressed = [];
         }
     } catch (error) {
-        console.error(error);
+        vscode.window.showInformationMessage(error);
     }
 }

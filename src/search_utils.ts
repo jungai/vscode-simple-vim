@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 export function searchForward(
     document: vscode.TextDocument,
     needle: string,
-    fromPosition: vscode.Position,
+    fromPosition: vscode.Position
 ): vscode.Position | undefined {
     for (let i = fromPosition.line; i < document.lineCount; ++i) {
         const lineText = document.lineAt(i).text;
@@ -21,11 +21,12 @@ export function searchForward(
 export function searchBackward(
     document: vscode.TextDocument,
     needle: string,
-    fromPosition: vscode.Position,
+    fromPosition: vscode.Position
 ): vscode.Position | undefined {
     for (let i = fromPosition.line; i >= 0; --i) {
         const lineText = document.lineAt(i).text;
-        const fromIndex = i === fromPosition.line ? fromPosition.character : +Infinity;
+        const fromIndex =
+            i === fromPosition.line ? fromPosition.character : +Infinity;
         const matchIndex = lineText.lastIndexOf(needle, fromIndex);
 
         if (matchIndex >= 0) {
@@ -40,7 +41,7 @@ export function searchForwardBracket(
     document: vscode.TextDocument,
     openingChar: string,
     closingChar: string,
-    fromPosition: vscode.Position,
+    fromPosition: vscode.Position
 ): vscode.Position | undefined {
     let n = 0;
 
@@ -68,13 +69,16 @@ export function searchBackwardBracket(
     document: vscode.TextDocument,
     openingChar: string,
     closingChar: string,
-    fromPosition: vscode.Position,
+    fromPosition: vscode.Position
 ): vscode.Position | undefined {
     let n = 0;
 
     for (let i = fromPosition.line; i >= 0; --i) {
         const lineText = document.lineAt(i).text;
-        const fromIndex = i === fromPosition.line ? fromPosition.character : lineText.length - 1;
+        const fromIndex =
+            i === fromPosition.line
+                ? fromPosition.character
+                : lineText.length - 1;
 
         for (let j = fromIndex; j >= 0; --j) {
             if (lineText[j] === closingChar) {

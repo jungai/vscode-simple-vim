@@ -7,7 +7,7 @@ import {
     OperatorRange,
     ParseFailure,
     ParseOperatorPartSuccess,
-    ParseOperatorRangeSuccess,
+    ParseOperatorRangeSuccess
 } from './parse_keys_types';
 import { Action } from './action_types';
 
@@ -42,7 +42,7 @@ export function arrayEquals<T>(xs: T[], ys: T[]) {
 export function parseKeysExact(
     matchKeys: string[],
     modes: Mode[],
-    action: (vimState: VimState, editor: vscode.TextEditor) => void,
+    action: (vimState: VimState, editor: vscode.TextEditor) => void
 ): Action {
     return (vimState, keys, editor) => {
         if (modes && modes.indexOf(vimState.mode) < 0) {
@@ -64,7 +64,11 @@ export function parseKeysRegex(
     doesPattern: RegExp,
     couldPattern: RegExp,
     modes: Mode[],
-    action: (vimState: VimState, editor: vscode.TextEditor, match: RegExpMatchArray) => void,
+    action: (
+        vimState: VimState,
+        editor: vscode.TextEditor,
+        match: RegExpMatchArray
+    ) => void
 ): Action {
     return (vimState, keys, editor) => {
         if (modes && modes.indexOf(vimState.mode) < 0) {
@@ -85,21 +89,24 @@ export function parseKeysRegex(
     };
 }
 
-function parseOperatorPart(keys: string[], operatorKeys: string[]): ParseFailure | ParseOperatorPartSuccess {
+function parseOperatorPart(
+    keys: string[],
+    operatorKeys: string[]
+): ParseFailure | ParseOperatorPartSuccess {
     if (arrayStartsWith(operatorKeys, keys)) {
         return {
             kind: 'success',
-            rest: keys.slice(operatorKeys.length),
+            rest: keys.slice(operatorKeys.length)
         };
     } else if (arrayStartsWith(keys, operatorKeys)) {
         return {
             kind: 'failure',
-            status: ParseKeysStatus.MORE_INPUT,
+            status: ParseKeysStatus.MORE_INPUT
         };
     } else {
         return {
             kind: 'failure',
-            status: ParseKeysStatus.NO,
+            status: ParseKeysStatus.NO
         };
     }
 }
@@ -108,7 +115,7 @@ function parseOperatorRangePart(
     vimState: VimState,
     keys: string[],
     editor: vscode.TextEditor,
-    motions: OperatorRange[],
+    motions: OperatorRange[]
 ): ParseFailure | ParseOperatorRangeSuccess {
     let could = false;
     for (const motion of motions) {
@@ -124,12 +131,12 @@ function parseOperatorRangePart(
     if (could) {
         return {
             kind: 'failure',
-            status: ParseKeysStatus.MORE_INPUT,
+            status: ParseKeysStatus.MORE_INPUT
         };
     } else {
         return {
             kind: 'failure',
-            status: ParseKeysStatus.NO,
+            status: ParseKeysStatus.NO
         };
     }
 }
@@ -141,8 +148,8 @@ export function parseKeysOperator(
         vimState: VimState,
         editor: vscode.TextEditor,
         ranges: (vscode.Range | undefined)[],
-        linewise: boolean,
-    ) => void,
+        linewise: boolean
+    ) => void
 ): Action {
     return (vimState, keys, editor) => {
         const operatorResult = parseOperatorPart(keys, operatorKeys);
@@ -157,7 +164,12 @@ export function parseKeysOperator(
                 return ParseKeysStatus.MORE_INPUT;
             }
 
-            const motionResult = parseOperatorRangePart(vimState, operatorResult.rest, editor, motions);
+            const motionResult = parseOperatorRangePart(
+                vimState,
+                operatorResult.rest,
+                editor,
+                motions
+            );
             if (motionResult.kind === 'failure') {
                 return motionResult.status;
             }
@@ -180,27 +192,31 @@ export function parseKeysOperator(
 export function createOperatorRangeExactKeys(
     matchKeys: string[],
     linewise: boolean,
-    f: (vimState: VimState, document: vscode.TextDocument, position: vscode.Position) => vscode.Range | undefined,
+    f: (
+        vimState: VimState,
+        document: vscode.TextDocument,
+        position: vscode.Position
+    ) => vscode.Range | undefined
 ): OperatorRange {
     return (vimState, keys, editor) => {
         if (arrayEquals(keys, matchKeys)) {
-            const ranges = editor.selections.map(selection => {
+            const ranges = editor.selections.map((selection) => {
                 return f(vimState, editor.document, selection.active);
             });
             return {
                 kind: 'success',
                 ranges: ranges,
-                linewise: linewise,
+                linewise: linewise
             };
         } else if (arrayStartsWith(keys, matchKeys)) {
             return {
                 kind: 'failure',
-                status: ParseKeysStatus.MORE_INPUT,
+                status: ParseKeysStatus.MORE_INPUT
             };
         } else {
             return {
                 kind: 'failure',
-                status: ParseKeysStatus.NO,
+                status: ParseKeysStatus.NO
             };
         }
     };
@@ -214,31 +230,36 @@ export function createOperatorRangeRegex(
         vimState: VimState,
         document: vscode.TextDocument,
         position: vscode.Position,
-        match: RegExpMatchArray,
-    ) => vscode.Range | undefined,
+        match: RegExpMatchArray
+    ) => vscode.Range | undefined
 ): OperatorRange {
     return (vimState, keys, editor) => {
         const keysStr = keys.join('');
         const doesMatch = keysStr.match(doesPattern);
 
         if (doesMatch) {
-            const ranges = editor.selections.map(selection => {
-                return f(vimState, editor.document, selection.active, doesMatch);
+            const ranges = editor.selections.map((selection) => {
+                return f(
+                    vimState,
+                    editor.document,
+                    selection.active,
+                    doesMatch
+                );
             });
             return {
                 kind: 'success',
                 ranges: ranges,
-                linewise: linewise,
+                linewise: linewise
             };
         } else if (keysStr.match(couldPattern)) {
             return {
                 kind: 'failure',
-                status: ParseKeysStatus.MORE_INPUT,
+                status: ParseKeysStatus.MORE_INPUT
             };
         } else {
             return {
                 kind: 'failure',
-                status: ParseKeysStatus.NO,
+                status: ParseKeysStatus.NO
             };
         }
     };

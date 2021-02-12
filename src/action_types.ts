@@ -6,5 +6,5 @@ import { ParseKeysStatus } from './parse_keys_types';
 export type Action = (
     vimState: VimState,
     keys: string[],
-    editor: vscode.TextEditor,
+    editor: vscode.TextEditor
 ) => ParseKeysStatus;

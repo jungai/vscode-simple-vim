@@ -5,7 +5,7 @@ import { VimState } from './vim_state_types';
 export enum ParseKeysStatus {
     YES,
     NO,
-    MORE_INPUT,
+    MORE_INPUT
 }
 
 export type ParseFailure = {
@@ -32,5 +32,5 @@ export type ParseOperatorSuccess = {
 export type OperatorRange = (
     vimState: VimState,
     keys: string[],
-    editor: vscode.TextEditor,
+    editor: vscode.TextEditor
 ) => ParseFailure | ParseOperatorRangeSuccess;

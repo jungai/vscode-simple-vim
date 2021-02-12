@@ -39,14 +39,20 @@ const TAG_NAME_GROUP = 2;
 const CLOSE_SLASH_GROUP = 3;
 
 export function getTags(document: vscode.TextDocument): PositionTag[] {
-    return positionTags(document, matchTags(getPartialTags(document.getText())));
+    return positionTags(
+        document,
+        matchTags(getPartialTags(document.getText()))
+    );
 }
 
-function positionTags(document: vscode.TextDocument, offsetTags: OffsetTag[]): PositionTag[] {
-    return offsetTags.map(tag => {
+function positionTags(
+    document: vscode.TextDocument,
+    offsetTags: OffsetTag[]
+): PositionTag[] {
+    return offsetTags.map((tag) => {
         const openingRange = new vscode.Range(
             document.positionAt(tag.opening.start),
-            document.positionAt(tag.opening.end),
+            document.positionAt(tag.opening.end)
         );
 
         if (tag.closing) {
@@ -55,13 +61,13 @@ function positionTags(document: vscode.TextDocument, offsetTags: OffsetTag[]): P
                 opening: openingRange,
                 closing: new vscode.Range(
                     document.positionAt(tag.closing.start),
-                    document.positionAt(tag.closing.end),
-                ),
+                    document.positionAt(tag.closing.end)
+                )
             };
         } else {
             return {
                 name: tag.name,
-                opening: openingRange,
+                opening: openingRange
             };
         }
     });
@@ -71,13 +77,13 @@ function matchTags(partialTags: PartialTag[]): OffsetTag[] {
     const tags: OffsetTag[] = [];
     const openingStack: PartialTagOpening[] = [];
 
-    partialTags.forEach(partialTag => {
+    partialTags.forEach((partialTag) => {
         if (partialTag.kind === 'opening') {
             openingStack.push(partialTag);
         } else if (partialTag.kind === 'self_closing') {
             tags.push({
                 name: partialTag.name,
-                opening: partialTag.range,
+                opening: partialTag.range
             });
         } else if (partialTag.kind === 'closing') {
             let stackTag = openingStack.pop();
@@ -87,7 +93,7 @@ function matchTags(partialTags: PartialTag[]): OffsetTag[] {
                     tags.push({
                         name: stackTag.name,
                         opening: stackTag.range,
-                        closing: partialTag.range,
+                        closing: partialTag.range
                     });
 
                     break;
@@ -95,7 +101,7 @@ function matchTags(partialTags: PartialTag[]): OffsetTag[] {
                     // Treat unclosed tags as self-closing because that's often the case in HTML
                     tags.push({
                         name: stackTag.name,
-                        opening: stackTag.range,
+                        opening: stackTag.range
                     });
                 }
 
@@ -108,7 +114,7 @@ function matchTags(partialTags: PartialTag[]): OffsetTag[] {
 }
 
 function getPartialTags(text: string): PartialTag[] {
-    const regex = /\<(\/)?([^\>\<\s]+)[^\>\<]*?(\/?)\>/g;
+    const regex = /\<(\/)?([^\>\<\s]+)[^\>\<]*?(\/?)\>/g; //eslint-disable-line
     const tagRanges: PartialTag[] = [];
     let match = regex.exec(text);
 
