@@ -36,6 +36,8 @@ function setModeContext(key: string) {
     });
 }
 
+// TODO: user config cursor style
+
 export function setModeCursorStyle(
     mode: Mode,
     editor: vscode.TextEditor
@@ -43,7 +45,7 @@ export function setModeCursorStyle(
     if (mode === Mode.Insert) {
         editor.options.cursorStyle = vscode.TextEditorCursorStyle.Line;
     } else if (mode === Mode.Normal) {
-        editor.options.cursorStyle = vscode.TextEditorCursorStyle.Underline;
+        editor.options.cursorStyle = vscode.TextEditorCursorStyle.Block;
     } else if (mode === Mode.Visual || mode === Mode.VisualLine) {
         editor.options.cursorStyle = vscode.TextEditorCursorStyle.LineThin;
     }
