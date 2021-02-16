@@ -1,9 +1,17 @@
-# SimpleVim
+# Vim For Junior (extends from SimpleVim)
 
 An opinionated Vim-like extension for VSCode that prioritizes simplicity (of use and implementation) and integration with native VSCode features.
 
 Once you enter Insert mode it will be a completely vanilla VSCode experience: the only event SimpleVim will listen for is the `Escape` key to go back to Normal mode.
 
+## Build Extension
+
+```bash
+ git clone https://github.com/jungai/vscode-simple-vim.git
+ yarn install # npm install
+ yarn local:build # npm local:build
+ # install .vsix in vscode extension
+```
 
 ## Operators
 
