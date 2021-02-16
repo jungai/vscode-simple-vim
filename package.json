@@ -1,10 +1,10 @@
 {
-    "name": "simple-vim",
-    "displayName": "Simple Vim",
-    "description": "Vim extension for VSCode",
-    "version": "0.0.5",
+    "name": "vim-for-junior",
+    "displayName": "Vim For Junior",
+    "description": "Vim extension for VSCode(extends from SimpleVim)",
+    "version": "0.0.6",
     "license": "MIT",
-    "publisher": "jpotterm",
+    "publisher": "jungai",
     "repository": {
         "type": "git",
         "url": "https://github.com/jpotterm/vscode-simple-vim.git"
